@@ -1,194 +1,269 @@
-<!DOCTYPE html>
 {% load static %}
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SaraAnsh - Help & Support</title>
+  <title>ResearchRadar - Help & Support</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="{% static 'styles.css' %}">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="{% static 'premium-design.css' %}">
   <style>
     body {
-      background-color: #f8f9fa;
-      font-family: Arial, sans-serif;
+      background: var(--color-surface-elevated);
     }
-    .container {
-      padding-top: 40px;
+    
+    .help-container {
+      padding: var(--space-12) 0;
     }
+    
     .section-header {
       text-align: center;
-      margin-bottom: 30px;
+      margin-bottom: var(--space-12);
     }
+    
     .section-header h2 {
-      font-size: 2rem;
+      font-size: clamp(2rem, 5vw, 3rem);
       font-weight: 700;
-      color: #333;
+      color: var(--color-text-primary);
+      margin-bottom: var(--space-4);
     }
+    
     .section-header p {
-      font-size: 1.125rem;
-      color: #666;
+      font-size: var(--text-lg);
+      color: var(--color-text-secondary);
+      max-width: 700px;
+      margin: 0 auto;
     }
-    .card {
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      background-color: #ffffff;
+    
+    .contact-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-2xl);
+      padding: var(--space-8);
+      box-shadow: var(--shadow-lg);
+      transition: all var(--transition-base);
     }
-    .card-header {
-      background-color: #007bff;
-      color: #ffffff;
+    
+    .contact-card:hover {
+      box-shadow: var(--shadow-xl);
+      transform: translateY(-4px);
+    }
+    
+    .contact-card .card-header {
+      background: var(--gradient-primary);
+      color: white;
+      border: none;
+      border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+      padding: var(--space-5);
+      margin: calc(var(--space-8) * -1) calc(var(--space-8) * -1) var(--space-6);
+    }
+    
+    .contact-info {
+      list-style: none;
+      padding: 0;
+      margin: var(--space-4) 0 0 0;
+    }
+    
+    .contact-info li {
+      padding: var(--space-3) 0;
+      color: var(--color-text-secondary);
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+    
+    .contact-info li strong {
+      color: var(--color-text-primary);
+      min-width: 80px;
+    }
+    
+    .contact-info a {
+      color: var(--color-primary);
       font-weight: 600;
-      font-size: 1.25rem;
+      transition: color var(--transition-fast);
     }
-    .card-body {
-      padding: 20px;
+    
+    .contact-info a:hover {
+      color: var(--color-primary-hover);
     }
+    
+    .faq-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-2xl);
+      padding: var(--space-6);
+      box-shadow: var(--shadow-md);
+    }
+    
+    .accordion-item {
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      margin-bottom: var(--space-3);
+      overflow: hidden;
+    }
+    
     .accordion-button {
-      border: 1px solid #ced4da;
-      border-radius: 0.5rem;
+      background: var(--color-surface);
+      color: var(--color-text-primary);
+      font-weight: 600;
+      border: none;
+      padding: var(--space-4);
     }
+    
     .accordion-button:not(.collapsed) {
-      color: #495057;
-      background-color: #e9ecef;
-      box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.125);
+      background: var(--color-primary);
+      color: white;
+      box-shadow: none;
     }
-    .btn-primary {
-      background-color: #007bff;
-      border-color: #007bff;
-    }
-    .btn-primary:hover {
-      background-color: #0056b3;
-      border-color: #004085;
-    }
-    .list-unstyled li {
-      margin-bottom: 10px;
-    }
-    .text-primary {
-      color: #007bff !important;
-    }
-    .text-dark {
-      color: #333 !important;
-    }
-    .bg-light {
-      background-color: #f8f9fa !important;
-    }
-    .navbar {
-                background: linear-gradient(90deg, rgb(112, 128, 144), rgb(192, 192, 192));
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            }
     
-            .navbar-brand {
-                font-weight: bold;
-                font-size: 1.75rem;
-                color: white;
-            }
+    .accordion-button:focus {
+      box-shadow: none;
+      border-color: var(--color-primary);
+    }
     
-            .nav-item{
-                padding: 0px 10px;
-            }       
-    
-            .navbar-nav .nav-link {
-                font-weight: bold;
-                font-size: 1.25rem;
-                padding: 0px 7px; /* Increased space around navbar text */
-            }
-    
-            .navbar-nav .nav-link:hover {
-                color: #d4d4d4;
-            }
+    .accordion-body {
+      background: var(--color-surface-elevated);
+      color: var(--color-text-secondary);
+      padding: var(--space-5);
+    }
   </style>
 </head>
 <body>
-
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark">
-  <div class="container p-2">
-    <a class="navbar-brand" href="#"><i class="bi bi-file-ppt-fill"></i>&nbsp;&nbsp;SaraAnsh</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav ms-auto">
-        <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'upload' %}">Upload</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'generatesummary' %}">Generate Summary</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'settings' %}">Settings</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'help' %}">Help</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">logout</a></li>
-      </ul>
-    </div>
-  </div>
-</nav>
-
-<!-- Help & Support Page Content -->
-<div class="container mt-5">
-  <!-- Contact Section -->
-  <div class="section-header">
-    <h2>Need Help? We're Here for You!</h2>
-    <p>Can't find what you're looking for? Our friendly support team is ready to assist you.</p>
-  </div>
-
-  <!-- Contact Card -->
-  <div class="row">
-    <div class="col-md-6 mx-auto">
-      <div class="card mb-4">
-        <div class="card-header">
-          <h5 class="card-title">Contact Our Support Team</h5>
-        </div>
-        <div class="card-body">
-          <p>If you need personalized assistance, feel free to reach out to us:</p>
-          <ul class="list-unstyled">
-            <li><strong>Email:</strong> <a href="mailto:support@example.com" class="text-primary">support@example.com</a></li>
-            <li><strong>Phone:</strong> <a href="tel:+1234567890" class="text-primary">123-456-7890</a></li>
-          </ul>
-        </div>
+  <!-- Premium Navbar -->
+  <nav class="navbar navbar-expand-lg">
+    <div class="container">
+      <a class="navbar-brand" href="{% url 'home' %}">
+        <i class="bi bi-file-ppt-fill"></i>
+        <span>ResearchRadar</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'upload' %}">Upload</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'generatesummary' %}">Generate Summary</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'settings' %}">Settings</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'payment' %}">Pricing</a></li>
+          <li class="nav-item"><a class="nav-link active" href="{% url 'help' %}">Help</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">logout</a></li>
+        </ul>
       </div>
     </div>
-  </div>
+  </nav>
 
-  <!-- FAQ Section -->
-  <div class="section-header">
-    <h2>Frequently Asked Questions (FAQ)</h2>
-  </div>
-  <div class="row">
-    <div class="col-md-8 mx-auto">
-      <div class="card bg-light">
-        <div class="card-body">
-          <div class="accordion" id="faqAccordion">
-            <div class="accordion-item">
-              <h2 class="accordion-header" id="faqHeading1">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse1" aria-expanded="false" aria-controls="faqCollapse1">
-                  How do I upload my publication data?
-                </button>
-              </h2>
-              <div id="faqCollapse1" class="accordion-collapse collapse" aria-labelledby="faqHeading1" data-bs-parent="#faqAccordion">
-                <div class="accordion-body">
-                  To upload your publication data, go to the "Upload Publications" section and follow the instructions provided on the page. You can upload your data in various formats, including Excel, BibTeX, or CSV.
+  <!-- Help & Support Content -->
+  <div class="help-container">
+    <div class="container">
+      <!-- Contact Section -->
+      <div class="section-header animate-fade-in">
+        <h2>Need Help? We're Here for You!</h2>
+        <p>Can't find what you're looking for? Our friendly support team is ready to assist you.</p>
+      </div>
+
+      <!-- Contact Card -->
+      <div class="row">
+        <div class="col-md-8 mx-auto">
+          <div class="contact-card animate-scale-in">
+            <div class="card-header">
+              <h5 class="mb-0" style="font-size: var(--text-xl);">
+                <i class="bi bi-headset me-2"></i>Contact Our Support Team
+              </h5>
+            </div>
+            <div class="card-body">
+              <p style="color: var(--color-text-secondary); margin-bottom: var(--space-4);">
+                If you need personalized assistance, feel free to reach out to us:
+              </p>
+              <ul class="contact-info">
+                <li>
+                  <strong>Email:</strong>
+                  <a href="mailto:utkarshsingh.mee@gmail.com">utkarshsingh.mee@gmail.com</a>
+                </li>
+                <li>
+                  <strong>Phone:</strong>
+                  <a href="tel:+917906437783">+91 7906437783</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FAQ Section -->
+      <div class="section-header mt-5">
+        <h2>Frequently Asked Questions</h2>
+        <p>Find answers to common questions about ResearchRadar</p>
+      </div>
+      
+      <div class="row">
+        <div class="col-md-10 mx-auto">
+          <div class="faq-card">
+            <div class="accordion" id="faqAccordion">
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="faqHeading1">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse1">
+                    How do I upload my publication data?
+                  </button>
+                </h2>
+                <div id="faqCollapse1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                  <div class="accordion-body">
+                    To upload your publication data, go to the "Upload" section and follow the instructions provided on the page. You can upload your data in various formats, including Excel, BibTeX, or CSV. Make sure your file contains a 'Profile URL' column with valid Google Scholar profile links.
+                  </div>
                 </div>
               </div>
-            </div>
-            <div class="accordion-item">
-              <h2 class="accordion-header" id="faqHeading2">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse2" aria-expanded="false" aria-controls="faqCollapse2">
-                  How can I generate a summary of my publications?
-                </button>
-              </h2>
-              <div id="faqCollapse2" class="accordion-collapse collapse" aria-labelledby="faqHeading2" data-bs-parent="#faqAccordion">
-                <div class="accordion-body">
-                  Once you've uploaded your publication data, navigate to the "Generate Summary" section. You can customize your summary by filtering by publication type, year range, and other criteria. The generated summary will provide you with key metrics and a detailed list of your publications.
+              
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="faqHeading2">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse2">
+                    How can I generate a summary of my publications?
+                  </button>
+                </h2>
+                <div id="faqCollapse2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                  <div class="accordion-body">
+                    Once you've uploaded your publication data, navigate to the "Generate Summary" section. You can customize your summary by filtering by publication type, year range, and other criteria. The generated summary will provide you with key metrics and a detailed list of your publications.
+                  </div>
                 </div>
               </div>
-            </div>
-            <div class="accordion-item">
-              <h2 class="accordion-header" id="faqHeading3">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse3" aria-expanded="false" aria-controls="faqCollapse3">
-                  What should I do if I forget my password?
-                </button>
-              </h2>
-              <div id="faqCollapse3" class="accordion-collapse collapse" aria-labelledby="faqHeading3" data-bs-parent="#faqAccordion">
-                <div class="accordion-body">
-                  If you forget your password, click on the "Forgot Password" link on the login page. You'll be prompted to enter your email address, and a password reset link will be sent to you. Follow the instructions in the email to reset your password.
+              
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="faqHeading3">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse3">
+                    What should I do if I forget my password?
+                  </button>
+                </h2>
+                <div id="faqCollapse3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                  <div class="accordion-body">
+                    If you forget your password, please contact our support team at utkarshsingh.mee@gmail.com or call +91 7906437783. We'll help you reset your password and regain access to your account.
+                  </div>
+                </div>
+              </div>
+              
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="faqHeading4">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse4">
+                    What file formats are supported?
+                  </button>
+                </h2>
+                <div id="faqCollapse4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                  <div class="accordion-body">
+                    We support Excel files (.xlsx, .xls) and BibTeX files (.bib). Your Excel file must contain a 'Profile URL' column with valid Google Scholar profile links for the system to process your publications.
+                  </div>
+                </div>
+              </div>
+              
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="faqHeading5">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse5">
+                    How long does processing take?
+                  </button>
+                </h2>
+                <div id="faqCollapse5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                  <div class="accordion-body">
+                    Processing time depends on the number of profiles in your file. Typically, processing takes a few minutes per profile. We process a maximum of 3 profiles per upload to ensure optimal performance. Please be patient during the processing.
+                  </div>
                 </div>
               </div>
             </div>
@@ -197,40 +272,45 @@
       </div>
     </div>
   </div>
-</div>
 
-<!-- Footer -->
-<footer>
-  <div class="container">
-      <div class="footer-section footer-links">
-          <h4>Quick Links</h4>
-          <a href="#">Privacy Policy</a>
-          <a href="#">Terms of Service</a>
-          <a href="#">Contact Us</a>
-      </div>
-      <div class="footer-section footer-contact">
-          <h4>Contact Information</h4>
-          <p><i class="bi bi-geo-alt"></i> Kanchanwadi, Chh. Sambhajinagar, Maharashtra</p>
-          <p><i class="bi bi-envelope"></i> <a href="mailto:info@pubsum.com">info@SaraAnsh.com</a></p>
-          <p><i class="bi bi-telephone"></i> +91 9876543210</p>
-      </div>
-      <div class="footer-section footer-social">
-          <h4>Follow Us</h4>
-          <div class="social-icons">
-              <a href="#" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
-              <a href="#" aria-label="Twitter"><i class="bi bi-twitter"></i></a>
-              <a href="#" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
-              <a href="#" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
-              <a href="#" aria-label="YouTube"><i class="bi bi-youtube"></i></a>
+  <!-- Premium Footer -->
+  <footer>
+    <div class="container">
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="footer-section">
+            <h4>Quick Links</h4>
+            <a href="{% url 'payment' %}">Pricing</a>
+            <a href="{% url 'home' %}">Home</a>
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Service</a>
           </div>
+        </div>
+        <div class="col-md-4">
+          <div class="footer-section">
+            <h4>Contact Information</h4>
+            <p><i class="bi bi-geo-alt"></i> Sravan PG, 3rd Cross, Kundahalli Colony, Bengaluru</p>
+            <p><i class="bi bi-envelope"></i> <a href="mailto:utsi22ise@cmrit.ac.in">utsi22ise@cmrit.ac.in</a></p>
+            <p><i class="bi bi-telephone"></i> +917906437783</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="footer-section">
+            <h4>Follow Us</h4>
+            <div class="social-icons">
+              <a href="https://www.facebook.com/share/1B53E3tMqC/" target="_blank" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+              <a href="https://www.instagram.com/utkarshsingh.me?igsh=MTBud2M1ZHcyeXFyaA==" target="_blank" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+              <a href="https://www.linkedin.com/in/utkarsh746?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" target="_blank" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
+            </div>
+          </div>
+        </div>
       </div>
-  </div>
-  <div class="footer-copyright">
-      &copy; 2024 SaraAnsh. All rights reserved.
-  </div>
-</footer>
+      <div class="footer-copyright">
+        &copy; 2025 ResearchRadar. All rights reserved.
+      </div>
+    </div>
+  </footer>
 
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

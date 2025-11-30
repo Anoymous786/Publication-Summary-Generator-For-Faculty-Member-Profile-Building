@@ -1,0 +1,414 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ResearchRadar - Pricing Plans</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="{% static 'premium-design.css' %}">
+  <style>
+    body {
+      background: var(--color-surface-elevated);
+    }
+    
+    .pricing-header {
+      text-align: center;
+      padding: var(--space-20) 0 var(--space-12);
+      background: var(--gradient-hero);
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .pricing-header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+    }
+    
+    .pricing-header h1 {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 800;
+      margin-bottom: var(--space-4);
+      position: relative;
+      z-index: 1;
+    }
+    
+    .pricing-header p {
+      font-size: var(--text-xl);
+      opacity: 0.95;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .pricing-container {
+      padding: var(--space-20) 0;
+    }
+    
+    .pricing-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-2xl);
+      padding: var(--space-8);
+      box-shadow: var(--shadow-md);
+      transition: all var(--transition-base);
+      height: 100%;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .pricing-card:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--shadow-2xl);
+      border-color: var(--color-primary);
+    }
+    
+    .pricing-card.featured {
+      border: 2px solid var(--color-primary);
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(255, 255, 255, 1) 100%);
+      transform: scale(1.05);
+    }
+    
+    .pricing-card.featured::before {
+      content: "POPULAR";
+      position: absolute;
+      top: -12px;
+      right: var(--space-6);
+      background: var(--gradient-primary);
+      color: white;
+      padding: var(--space-2) var(--space-5);
+      border-radius: var(--radius-full);
+      font-size: var(--text-xs);
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      box-shadow: var(--shadow-md);
+    }
+    
+    .plan-name {
+      font-size: var(--text-2xl);
+      font-weight: 700;
+      color: var(--color-text-primary);
+      margin-bottom: var(--space-3);
+    }
+    
+    .plan-price {
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      font-weight: 800;
+      color: var(--color-primary);
+      margin: var(--space-6) 0;
+      line-height: 1;
+    }
+    
+    .plan-price span {
+      font-size: var(--text-lg);
+      color: var(--color-text-secondary);
+      font-weight: 400;
+    }
+    
+    .plan-features {
+      list-style: none;
+      padding: 0;
+      margin: var(--space-6) 0;
+      flex: 1;
+    }
+    
+    .plan-features li {
+      padding: var(--space-3) 0;
+      border-bottom: 1px solid var(--color-border);
+      color: var(--color-text-secondary);
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+    
+    .plan-features li:last-child {
+      border-bottom: none;
+    }
+    
+    .plan-features li i {
+      color: var(--color-primary);
+      font-size: var(--text-lg);
+      flex-shrink: 0;
+    }
+    
+    .btn-purchase {
+      width: 100%;
+      padding: var(--space-4);
+      font-size: var(--text-base);
+      font-weight: 600;
+      border-radius: var(--radius-lg);
+      background: var(--gradient-primary);
+      border: none;
+      color: white;
+      transition: all var(--transition-base);
+      margin-top: auto;
+    }
+    
+    .btn-purchase:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-glow);
+      color: white;
+    }
+    
+    .payment-methods {
+      text-align: center;
+      padding: var(--space-16) 0;
+      background: var(--color-surface);
+      margin-top: var(--space-12);
+      border-top: 1px solid var(--color-border);
+    }
+    
+    .payment-methods h3 {
+      margin-bottom: var(--space-8);
+      color: var(--color-text-primary);
+      font-size: var(--text-2xl);
+    }
+    
+    .payment-icon {
+      font-size: 3rem;
+      margin: 0 var(--space-5);
+      color: var(--color-primary);
+      transition: all var(--transition-fast);
+    }
+    
+    .payment-icon:hover {
+      transform: scale(1.2);
+      color: var(--color-primary-hover);
+    }
+    
+    @media (max-width: 768px) {
+      .pricing-card.featured {
+        transform: scale(1);
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Premium Navbar -->
+  <nav class="navbar navbar-expand-lg">
+    <div class="container">
+      <a class="navbar-brand" href="{% url 'home' %}">
+        <i class="bi bi-file-ppt-fill"></i>
+        <span>ResearchRadar</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'upload' %}">Upload</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'generatesummary' %}">Generate Summary</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'settings' %}">Settings</a></li>
+          <li class="nav-item"><a class="nav-link active" href="{% url 'payment' %}">Pricing</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'help' %}">Help</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">logout</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Pricing Header -->
+  <div class="pricing-header">
+    <div class="container">
+      <h1>Choose Your Plan</h1>
+      <p>Select the perfect plan for your research needs</p>
+    </div>
+  </div>
+
+  <!-- Pricing Cards -->
+  <div class="pricing-container">
+    <div class="container">
+      <div class="row g-4">
+        <!-- Starter Plan -->
+        <div class="col-lg-3 col-md-6">
+          <div class="pricing-card animate-scale-in">
+            <div class="plan-name">Starter</div>
+            <div class="plan-price">₹4,500<span>/month</span></div>
+            <ul class="plan-features">
+              <li><i class="bi bi-check-circle-fill"></i> <span>Up to 5 profiles</span></li>
+              <li><i class="bi bi-check-circle-fill"></i> <span>Basic citation analysis</span></li>
+              <li><i class="bi bi-check-circle-fill"></i> <span>Excel export</span></li>
+              <li><i class="bi bi-check-circle-fill"></i> <span>Email support</span></li>
+              <li><i class="bi bi-check-circle-fill"></i> <span>Standard processing</span></li>
+            </ul>
+            <button class="btn btn-purchase" onclick="selectPlan('starter', 4500)">Choose Plan</button>
+          </div>
+        </div>
+
+        <!-- Basic Plan -->
+        <div class="col-lg-3 col-md-6">
+          <div class="pricing-card animate-scale-in" style="animation-delay: 0.1s">
+            <div class="plan-name">Basic</div>
+            <div class="plan-price">₹5,500<span>/month</span></div>
+            <ul class="plan-features">
+              <li><i class="bi bi-check-circle-fill"></i> <span>Up to 15 profiles</span></li>
+              <li><i class="bi bi-check-circle-fill"></i> <span>Basic citation analysis</span></li>
+              <li><i class="bi bi-check-circle-fill"></i> <span>Excel export</span></li>
+              <li><i class="bi bi-check-circle-fill"></i> <span>Email support</span></li>
+              <li><i class="bi bi-check-circle-fill"></i> <span>Standard processing</span></li>
+              <li><i class="bi bi-check-circle-fill"></i> <span>Basic graphs</span></li>
+            </ul>
+            <button class="btn btn-purchase" onclick="selectPlan('basic', 5500)">Choose Plan</button>
+          </div>
+        </div>
+
+        <!-- Professional Plan (Featured) -->
+        <div class="col-lg-3 col-md-6">
+          <div class="pricing-card featured animate-scale-in" style="animation-delay: 0.2s">
+            <div class="plan-name">Professional</div>
+            <div class="plan-price">₹7,500<span>/month</span></div>
+            <ul class="plan-features">
+              <li><i class="bi bi-check-circle-fill"></i> <span>Up to 50 profiles</span></li>
+              <li><i class="bi bi-check-circle-fill"></i> <span>Advanced citation analysis</span></li>
+              <li><i class="bi bi-check-circle-fill"></i> <span>Excel & CSV export</span></li>
+              <li><i class="bi bi-check-circle-fill"></i> <span>Priority support</span></li>
+              <li><i class="bi bi-check-circle-fill"></i> <span>Interactive graphs</span></li>
+              <li><i class="bi bi-check-circle-fill"></i> <span>H-index calculation</span></li>
+              <li><i class="bi bi-check-circle-fill"></i> <span>Faster processing</span></li>
+              <li><i class="bi bi-check-circle-fill"></i> <span>Citation trends</span></li>
+            </ul>
+            <button class="btn btn-purchase" onclick="selectPlan('professional', 7500)">Choose Plan</button>
+          </div>
+        </div>
+
+        <!-- Enterprise Plan -->
+        <div class="col-lg-3 col-md-6">
+          <div class="pricing-card animate-scale-in" style="animation-delay: 0.3s">
+            <div class="plan-name">Enterprise</div>
+            <div class="plan-price">₹9,500<span>/month</span></div>
+            <ul class="plan-features">
+              <li><i class="bi bi-check-circle-fill"></i> <span>Unlimited profiles</span></li>
+              <li><i class="bi bi-check-circle-fill"></i> <span>Complete analytics suite</span></li>
+              <li><i class="bi bi-check-circle-fill"></i> <span>All export formats</span></li>
+              <li><i class="bi bi-check-circle-fill"></i> <span>24/7 dedicated support</span></li>
+              <li><i class="bi bi-check-circle-fill"></i> <span>Custom visualizations</span></li>
+              <li><i class="bi bi-check-circle-fill"></i> <span>API access</span></li>
+              <li><i class="bi bi-check-circle-fill"></i> <span>Bulk processing</span></li>
+              <li><i class="bi bi-check-circle-fill"></i> <span>Custom reports</span></li>
+              <li><i class="bi bi-check-circle-fill"></i> <span>White-label option</span></li>
+            </ul>
+            <button class="btn btn-purchase" onclick="selectPlan('enterprise', 9500)">Choose Plan</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Additional Pricing Options -->
+      <div class="row g-4 mt-2">
+        <div class="col-lg-4 col-md-6">
+          <div class="pricing-card animate-scale-in" style="animation-delay: 0.4s">
+            <div class="plan-name">Student</div>
+            <div class="plan-price">₹4,200<span>/month</span></div>
+            <ul class="plan-features">
+              <li><i class="bi bi-check-circle-fill"></i> <span>Up to 8 profiles</span></li>
+              <li><i class="bi bi-check-circle-fill"></i> <span>Basic citation analysis</span></li>
+              <li><i class="bi bi-check-circle-fill"></i> <span>Excel export</span></li>
+              <li><i class="bi bi-check-circle-fill"></i> <span>Email support</span></li>
+              <li><i class="bi bi-check-circle-fill"></i> <span>Student discount applied</span></li>
+            </ul>
+            <button class="btn btn-purchase" onclick="selectPlan('student', 4200)">Choose Plan</button>
+          </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6">
+          <div class="pricing-card animate-scale-in" style="animation-delay: 0.5s">
+            <div class="plan-name">Premium</div>
+            <div class="plan-price">₹8,200<span>/month</span></div>
+            <ul class="plan-features">
+              <li><i class="bi bi-check-circle-fill"></i> <span>Up to 75 profiles</span></li>
+              <li><i class="bi bi-check-circle-fill"></i> <span>Advanced analytics</span></li>
+              <li><i class="bi bi-check-circle-fill"></i> <span>Multiple export formats</span></li>
+              <li><i class="bi bi-check-circle-fill"></i> <span>Priority support</span></li>
+              <li><i class="bi bi-check-circle-fill"></i> <span>Advanced visualizations</span></li>
+              <li><i class="bi bi-check-circle-fill"></i> <span>Custom dashboards</span></li>
+            </ul>
+            <button class="btn btn-purchase" onclick="selectPlan('premium', 8200)">Choose Plan</button>
+          </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6">
+          <div class="pricing-card animate-scale-in" style="animation-delay: 0.6s">
+            <div class="plan-name">Ultimate</div>
+            <div class="plan-price">₹10,000<span>/month</span></div>
+            <ul class="plan-features">
+              <li><i class="bi bi-check-circle-fill"></i> <span>Unlimited everything</span></li>
+              <li><i class="bi bi-check-circle-fill"></i> <span>Full feature access</span></li>
+              <li><i class="bi bi-check-circle-fill"></i> <span>All export formats</span></li>
+              <li><i class="bi bi-check-circle-fill"></i> <span>24/7 premium support</span></li>
+              <li><i class="bi bi-check-circle-fill"></i> <span>Custom integrations</span></li>
+              <li><i class="bi bi-check-circle-fill"></i> <span>Dedicated account manager</span></li>
+            </ul>
+            <button class="btn btn-purchase" onclick="selectPlan('ultimate', 10000)">Choose Plan</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Payment Methods -->
+  <div class="payment-methods">
+    <div class="container">
+      <h3>Accepted Payment Methods</h3>
+      <div class="d-flex justify-content-center align-items-center flex-wrap">
+        <i class="bi bi-credit-card payment-icon" title="Credit/Debit Cards"></i>
+        <i class="bi bi-wallet2 payment-icon" title="UPI"></i>
+        <i class="bi bi-bank payment-icon" title="Net Banking"></i>
+        <i class="bi bi-phone payment-icon" title="Mobile Wallets"></i>
+      </div>
+      <p class="mt-4" style="color: var(--color-text-secondary);">Secure payment processing. All transactions are encrypted and secure.</p>
+    </div>
+  </div>
+
+  <!-- Premium Footer -->
+  <footer>
+    <div class="container">
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="footer-section">
+            <h4>Quick Links</h4>
+            <a href="{% url 'home' %}">Home</a>
+            <a href="{% url 'help' %}">Help</a>
+            <a href="{% url 'payment' %}">Pricing</a>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="footer-section">
+            <h4>Contact Information</h4>
+            <p><i class="bi bi-geo-alt"></i> Sravan PG, 3rd Cross, Kundahalli Colony, Bengaluru</p>
+            <p><i class="bi bi-envelope"></i> <a href="mailto:utsi22ise@cmrit.ac.in">utsi22ise@cmrit.ac.in</a></p>
+            <p><i class="bi bi-telephone"></i> +917906437783</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="footer-section">
+            <h4>Follow Us</h4>
+            <div class="social-icons">
+              <a href="https://www.facebook.com/share/1B53E3tMqC/" target="_blank" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+              <a href="https://www.instagram.com/utkarshsingh.me?igsh=MTBud2M1ZHcyeXFyaA==" target="_blank" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+              <a href="https://www.linkedin.com/in/utkarsh746?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" target="_blank" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="footer-copyright">
+        &copy; 2025 ResearchRadar. All rights reserved.
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    function selectPlan(planName, amount) {
+      alert(`You selected the ${planName} plan for ₹${amount.toLocaleString('en-IN')}/month.\n\nPayment integration can be added here.`);
+    }
+  </script>
+</body>
+</html>

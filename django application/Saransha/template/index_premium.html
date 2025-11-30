@@ -1,0 +1,495 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ResearchRadar - Premium Publication Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="{% static 'premium-design.css' %}">
+    <style>
+        /* Premium Landing Page Styles */
+        body {
+            background: var(--color-surface);
+        }
+        
+        /* Hero Section - Premium */
+        .hero-premium {
+            min-height: 90vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            padding: var(--space-20) 0;
+        }
+        
+        .hero-premium::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            color: white;
+        }
+        
+        .hero-title {
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: var(--space-6);
+            letter-spacing: -0.03em;
+            background: linear-gradient(135deg, #ffffff 0%, rgba(255, 255, 255, 0.8) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .hero-subtitle {
+            font-size: clamp(1.125rem, 3vw, 1.5rem);
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: var(--space-8);
+            line-height: 1.6;
+            max-width: 600px;
+        }
+        
+        .hero-cta {
+            display: flex;
+            gap: var(--space-4);
+            flex-wrap: wrap;
+        }
+        
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--space-6);
+            margin-top: var(--space-16);
+        }
+        
+        .feature-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: var(--radius-xl);
+            padding: var(--space-6);
+            transition: all var(--transition-base);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-8px);
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: var(--shadow-2xl);
+        }
+        
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: var(--radius-lg);
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--text-2xl);
+            margin-bottom: var(--space-4);
+        }
+        
+        .feature-card h3 {
+            color: white;
+            font-size: var(--text-xl);
+            margin-bottom: var(--space-2);
+        }
+        
+        .feature-card p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: var(--text-sm);
+            margin: 0;
+        }
+        
+        /* About Section */
+        .about-section {
+            padding: var(--space-24) 0;
+            background: var(--color-surface);
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: var(--space-16);
+        }
+        
+        .section-title {
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 700;
+            color: var(--color-text-primary);
+            margin-bottom: var(--space-4);
+            letter-spacing: -0.02em;
+        }
+        
+        .section-description {
+            font-size: var(--text-lg);
+            color: var(--color-text-secondary);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-12);
+            align-items: center;
+            margin-top: var(--space-12);
+        }
+        
+        .about-text {
+            font-size: var(--text-lg);
+            color: var(--color-text-secondary);
+            line-height: var(--line-height-relaxed);
+        }
+        
+        .about-features {
+            list-style: none;
+            padding: 0;
+            margin-top: var(--space-6);
+        }
+        
+        .about-features li {
+            padding: var(--space-3) 0;
+            color: var(--color-text-secondary);
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+        
+        .about-features li::before {
+            content: '✓';
+            width: 24px;
+            height: 24px;
+            border-radius: var(--radius-full);
+            background: var(--color-primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: var(--text-sm);
+            flex-shrink: 0;
+        }
+        
+        .about-visual {
+            background: var(--gradient-primary);
+            border-radius: var(--radius-2xl);
+            padding: var(--space-12);
+            min-height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            color: white;
+            box-shadow: var(--shadow-2xl);
+        }
+        
+        .about-visual i {
+            font-size: 5rem;
+            margin-bottom: var(--space-4);
+            opacity: 0.9;
+        }
+        
+        /* Objectives Section */
+        .objectives-section {
+            padding: var(--space-24) 0;
+            background: var(--color-surface-elevated);
+        }
+        
+        .objectives-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--space-6);
+            margin-top: var(--space-12);
+        }
+        
+        .objective-card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-xl);
+            padding: var(--space-6);
+            transition: all var(--transition-base);
+        }
+        
+        .objective-card:hover {
+            border-color: var(--color-primary);
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-4px);
+        }
+        
+        .objective-card h4 {
+            color: var(--color-text-primary);
+            margin-bottom: var(--space-3);
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+        
+        .objective-card h4::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            border-radius: var(--radius-full);
+            background: var(--color-primary);
+        }
+        
+        .objective-card p {
+            color: var(--color-text-secondary);
+            margin: 0;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .about-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .hero-cta {
+                flex-direction: column;
+            }
+            
+            .hero-cta .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Premium Navbar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <i class="bi bi-file-ppt-fill"></i>
+                <span>ResearchRadar</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'upload' %}">Upload</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'payment' %}">Pricing</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'help' %}">Help</a></li>
+                    <li class="nav-item"><a class="nav-link btn btn-primary btn-sm" href="{% url 'login' %}">Login</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    {% if m %}
+    <div class="container mt-4">
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            {{ m }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Premium Hero Section -->
+    <section class="hero-premium" id="home">
+        <div class="container">
+            <div class="hero-content animate-fade-in">
+                <h1 class="hero-title">Elevate Your Research Profile</h1>
+                <p class="hero-subtitle">
+                    Effortlessly manage, analyze, and showcase your publications with ResearchRadar. 
+                    The ultimate platform for researchers and academics.
+                </p>
+                <div class="hero-cta">
+                    <a href="{% url 'upload' %}" class="btn btn-primary btn-lg">
+                        Get Started
+                        <i class="bi bi-arrow-right"></i>
+                    </a>
+                    <a href="{% url 'payment' %}" class="btn btn-secondary btn-lg">
+                        View Pricing
+                    </a>
+                </div>
+                
+                <!-- Feature Grid -->
+                <div class="feature-grid">
+                    <div class="feature-card animate-scale-in">
+                        <div class="feature-icon">
+                            <i class="bi bi-search"></i>
+                        </div>
+                        <h3>Smart Discovery</h3>
+                        <p>Find and organize publications effortlessly</p>
+                    </div>
+                    <div class="feature-card animate-scale-in" style="animation-delay: 0.1s">
+                        <div class="feature-icon">
+                            <i class="bi bi-file-text"></i>
+                        </div>
+                        <h3>Auto Summarization</h3>
+                        <p>AI-powered summaries in seconds</p>
+                    </div>
+                    <div class="feature-card animate-scale-in" style="animation-delay: 0.2s">
+                        <div class="feature-icon">
+                            <i class="bi bi-graph-up"></i>
+                        </div>
+                        <h3>Advanced Analytics</h3>
+                        <p>Track citations and impact metrics</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">About ResearchRadar</h2>
+                <p class="section-description">
+                    An innovative platform designed to help researchers and academics discover, 
+                    summarize, and share research publications effortlessly.
+                </p>
+            </div>
+            
+            <div class="about-content">
+                <div>
+                    <p class="about-text">
+                        ResearchRadar streamlines the research process with advanced algorithms 
+                        and an intuitive interface. Our platform makes it easier than ever to 
+                        access, manage, and showcase valuable knowledge.
+                    </p>
+                    <ul class="about-features">
+                        <li>Efficient Search and Discovery</li>
+                        <li>Automated Summarization Tools</li>
+                        <li>Collaboration and Sharing Options</li>
+                        <li>Advanced Analytics and Insights</li>
+                        <li>Customizable User Experience</li>
+                    </ul>
+                </div>
+                <div class="about-visual">
+                    <i class="bi bi-graph-up-arrow"></i>
+                    <h3 style="color: white; margin-top: var(--space-4);">Advanced Analytics</h3>
+                    <p style="color: rgba(255,255,255,0.9); text-align: center; margin-top: var(--space-2);">
+                        Track your research impact with comprehensive citation analysis
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Objectives Section -->
+    <section class="objectives-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Our Objectives</h2>
+                <p class="section-description">
+                    We're committed to revolutionizing how researchers manage their publications
+                </p>
+            </div>
+            
+            <div class="objectives-grid">
+                <div class="objective-card">
+                    <h4>Enhance Efficiency</h4>
+                    <p>Streamline publication management with intelligent automation</p>
+                </div>
+                <div class="objective-card">
+                    <h4>User-Friendly Interface</h4>
+                    <p>Intuitive design that makes complex tasks simple</p>
+                </div>
+                <div class="objective-card">
+                    <h4>Advanced Algorithms</h4>
+                    <p>AI-powered tools for accurate summarization and analysis</p>
+                </div>
+                <div class="objective-card">
+                    <h4>Robust Support</h4>
+                    <p>Comprehensive documentation and dedicated assistance</p>
+                </div>
+                <div class="objective-card">
+                    <h4>Custom Reports</h4>
+                    <p>Generate tailored reports for accrediting agencies</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Premium Footer -->
+    <footer>
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="footer-section">
+                        <h4>Quick Links</h4>
+                        <a href="{% url 'payment' %}">Pricing</a>
+                        <a href="{% url 'help' %}">Help</a>
+                        <a href="#">Privacy Policy</a>
+                        <a href="#">Terms of Service</a>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="footer-section">
+                        <h4>Contact Information</h4>
+                        <p><i class="bi bi-geo-alt"></i> Sravan PG, 3rd Cross, Kundahalli Colony, Bengaluru</p>
+                        <p><i class="bi bi-envelope"></i> <a href="mailto:utsi22ise@cmrit.ac.in">utsi22ise@cmrit.ac.in</a></p>
+                        <p><i class="bi bi-telephone"></i> +917906437783</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="footer-section">
+                        <h4>Follow Us</h4>
+                        <div class="social-icons">
+                            <a href="https://www.facebook.com/share/1B53E3tMqC/" target="_blank" aria-label="Facebook">
+                                <i class="bi bi-facebook"></i>
+                            </a>
+                            <a href="https://www.instagram.com/utkarshsingh.me?igsh=MTBud2M1ZHcyeXFyaA==" target="_blank" aria-label="Instagram">
+                                <i class="bi bi-instagram"></i>
+                            </a>
+                            <a href="https://www.linkedin.com/in/utkarsh746?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" target="_blank" aria-label="LinkedIn">
+                                <i class="bi bi-linkedin"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-copyright">
+                &copy; 2025 ResearchRadar. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

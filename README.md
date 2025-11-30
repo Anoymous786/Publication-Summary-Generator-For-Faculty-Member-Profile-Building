@@ -29,17 +29,88 @@ An AI-powered system that automates the extraction, enrichment, and visualizatio
 
 ## 📥 Installation & Setup
 
-```bash
-# Clone the repository
-git clone https://github.com/yourusername/publication-summary-generator.git
-cd publication-summary-generator
+### For Windows (PowerShell):
+```powershell
+# Navigate to the project directory
+cd "E:\Publication-Summary-Generator-9\django application\Saransha"
 
-# Create virtual environment
+# Create virtual environment (optional, if you want to isolate dependencies)
 python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
+
+# Activate virtual environment (Windows PowerShell)
+.\venv\Scripts\Activate.ps1
+# OR if you get execution policy error, use:
+.\venv\Scripts\activate
 
 # Install dependencies
-pip install -r requirements.txt
+pip install -r requirement.txt
+
+# Run migrations (if needed)
+python manage.py migrate
 
 # Run the server
 python manage.py runserver
+```
+
+### Quick Start (Without Virtual Environment):
+```powershell
+# Navigate to the project directory
+cd "E:\Publication-Summary-Generator-9\django application\Saransha"
+
+# Install dependencies (if not already installed)
+pip install -r requirement.txt
+
+# Run the server
+python manage.py runserver
+```
+
+**Note:** If you get an execution policy error when activating venv, run:
+```powershell
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+```
+
+### For Linux/Mac:
+```bash
+# Navigate to the project directory
+cd "django application/Saransha"
+
+# Create virtual environment
+python -m venv venv
+source venv/bin/activate
+
+# Install dependencies
+pip install -r requirement.txt
+
+# Run migrations (if needed)
+python manage.py migrate
+
+# Run the server
+python manage.py runserver
+```
+
+---
+
+## 🌐 Access the Application
+
+Once the server is running, open your browser and navigate to:
+```
+http://localhost:8000
+```
+
+---
+
+## 📝 Usage Instructions
+
+1. **Sign Up/Login**: Create an account or login to access the system
+2. **Upload Data**: Upload an Excel file (.xlsx or .xls) with a 'Profile URL' column containing Google Scholar profile URLs
+3. **Generate Summary**: Filter and generate publication summaries
+4. **View Graphs**: Visualize publication data with interactive graphs
+
+---
+
+## ⚠️ Important Notes
+
+- Processing may take several minutes depending on the number of profiles
+- Maximum 3 profiles are processed per upload to avoid long waits
+- Google Scholar may rate-limit requests - wait 5-10 minutes between large batches
+- Ensure Profile URLs are valid Google Scholar profile links

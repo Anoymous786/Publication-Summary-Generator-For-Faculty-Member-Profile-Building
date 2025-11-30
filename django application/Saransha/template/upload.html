@@ -1,166 +1,309 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SaraAnsh - Upload Data</title>
-  <!-- Bootstrap CSS -->
+  <title>ResearchRadar - Upload Data</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Custom CSS -->
-  <link rel="stylesheet" href="{% static 'styles.css' %}">
-  <!-- Bootstrap Icons -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-
+  <link rel="stylesheet" href="{% static 'premium-design.css' %}">
   <style>
-    .navbar {
-                background: linear-gradient(90deg, rgb(112, 128, 144), rgb(192, 192, 192));
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            }
+    body {
+      background: var(--color-surface-elevated);
+      min-height: 100vh;
+    }
     
-            .navbar-brand {
-                font-weight: bold;
-                font-size: 1.75rem;
-                color: white;
-            }
+    .main-content {
+      padding: var(--space-8) 0;
+    }
     
-            .nav-item{
-                padding: 0px 10px;
-            }       
+    .page-header {
+      text-align: center;
+      margin-bottom: var(--space-12);
+    }
     
-            .navbar-nav .nav-link {
-                font-weight: bold;
-                font-size: 1.25rem;
-                padding: 0px 7px; /* Increased space around navbar text */
-            }
+    .page-icon {
+      width: 100px;
+      height: 100px;
+      background: var(--gradient-primary);
+      border-radius: var(--radius-full);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto var(--space-6);
+      box-shadow: var(--shadow-glow);
+    }
     
-            .navbar-nav .nav-link:hover {
-                color: #d4d4d4;
-            }
+    .page-icon i {
+      font-size: 3rem;
+      color: white;
+    }
+    
+    .page-header h1 {
+      font-size: var(--text-4xl);
+      font-weight: 700;
+      color: var(--color-text-primary);
+      margin-bottom: var(--space-4);
+    }
+    
+    .page-header p {
+      font-size: var(--text-lg);
+      color: var(--color-text-secondary);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    
+    .upload-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-2xl);
+      padding: var(--space-10);
+      box-shadow: var(--shadow-lg);
+      transition: all var(--transition-base);
+    }
+    
+    .upload-card:hover {
+      box-shadow: var(--shadow-xl);
+    }
+    
+    .file-upload-area {
+      position: relative;
+      border: 2px dashed var(--color-border);
+      border-radius: var(--radius-xl);
+      padding: var(--space-12);
+      text-align: center;
+      background: var(--color-surface-elevated);
+      transition: all var(--transition-base);
+      cursor: pointer;
+      margin: var(--space-6) 0;
+    }
+    
+    .file-upload-area:hover {
+      border-color: var(--color-primary);
+      background: rgba(99, 102, 241, 0.05);
+    }
+    
+    .file-upload-area.dragover {
+      border-color: var(--color-primary);
+      background: rgba(99, 102, 241, 0.1);
+      transform: scale(1.02);
+    }
+    
+    .file-upload-area input[type="file"] {
+      position: absolute;
+      opacity: 0;
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+    }
+    
+    .file-upload-icon {
+      font-size: 4rem;
+      color: var(--color-primary);
+      margin-bottom: var(--space-4);
+    }
+    
+    .file-upload-text {
+      font-size: var(--text-lg);
+      font-weight: 600;
+      color: var(--color-text-primary);
+      margin-bottom: var(--space-2);
+    }
+    
+    .file-upload-hint {
+      font-size: var(--text-sm);
+      color: var(--color-text-secondary);
+    }
+    
+    .info-card {
+      background: rgba(99, 102, 241, 0.1);
+      border: 1px solid rgba(99, 102, 241, 0.2);
+      border-left: 4px solid var(--color-primary);
+      border-radius: var(--radius-lg);
+      padding: var(--space-5);
+      margin: var(--space-6) 0;
+    }
+    
+    .info-card ul {
+      margin: var(--space-3) 0 0 0;
+      padding-left: var(--space-6);
+    }
+    
+    .info-card li {
+      color: var(--color-text-secondary);
+      margin-bottom: var(--space-2);
+    }
   </style>
 </head>
-
 <body>
-
-  <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <!-- Premium Navbar -->
+  <nav class="navbar navbar-expand-lg">
     <div class="container">
-      <a class="navbar-brand" href="#"><i class="bi bi-file-ppt-fill"></i> SaraAnsh</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <a class="navbar-brand" href="{% url 'home' %}">
+        <i class="bi bi-file-ppt-fill"></i>
+        <span>ResearchRadar</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
           <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
-          <li class="nav-item"><a class="nav-link" href="{% url 'upload' %}">Upload</a></li>
-          <!-- <li class="nav-item"><a class="nav-link" href="{% url 'generatesummary' %}">Generate Summary</a></li>
+          <li class="nav-item"><a class="nav-link active" href="{% url 'upload' %}">Upload</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'generatesummary' %}">Generate Summary</a></li>
           <li class="nav-item"><a class="nav-link" href="{% url 'settings' %}">Settings</a></li>
-          <li class="nav-item"><a class="nav-link" href="{% url 'help' %}">Help</a></li> -->
+          <li class="nav-item"><a class="nav-link" href="{% url 'payment' %}">Pricing</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'help' %}">Help</a></li>
           <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
         </ul>
       </div>
     </div>
   </nav>
-  {% if warning_message %}
-    <div class="alert alert-warning alert-dismissible fade show" role="alert">
-        {{ warning_message }}
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-{% endif %}
-
 
   <!-- Main Content -->
-  <main class="container my-5">
-    <!-- Title Section -->
-    <div class="text-center mb-4">
-      <h1 class="fw-bold">Upload Your Data</h1>
-      <p class="lead text-muted">Simplify and manage your publication records for profile building.</p>
+  <main class="container main-content">
+    <div class="page-header animate-fade-in">
+      <div class="page-icon">
+        <i class="bi bi-cloud-upload"></i>
+      </div>
+      <h1>Upload Your Data</h1>
+      <p>Simplify and manage your publication records for profile building with our advanced research tools.</p>
     </div>
 
     <!-- Upload Form -->
-    <div class="card shadow p-4">
+    <div class="upload-card animate-scale-in">
       <form id="uploadForm" action="{% url 'upload' %}" method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        <div class="mb-3">
-          <label for="dataFile" class="form-label fw-semibold">Upload Excel or BibTeX File</label>
-          <input type="file" class="form-control" id="dataFile" name="excel_file" accept=".xlsx,.xls,.bib" required>
+        <div class="file-upload-area" id="fileUploadArea">
+          <i class="bi bi-file-earmark-excel file-upload-icon"></i>
+          <div class="file-upload-text">Choose Excel File or Drag & Drop</div>
+          <div class="file-upload-hint">Supports .xlsx and .xls files</div>
+          <input type="file" id="dataFile" name="excel_file" accept=".xlsx,.xls" required>
         </div>
-        <div class="text-center">
-          <button type="submit"  id="uploadButton" class="btn btn-primary btn-lg">Upload & Generate</button>
+        
+        <div class="info-card">
+          <i class="bi bi-info-circle-fill me-2" style="color: var(--color-primary);"></i>
+          <strong>File Requirements:</strong>
+          <ul>
+            <li>Excel file (.xlsx or .xls) format</li>
+            <li>Must contain a 'Profile URL' column</li>
+            <li>Profile URLs should be valid Google Scholar links</li>
+            <li>Processing may take several minutes - please be patient</li>
+          </ul>
+        </div>
+        
+        <div class="text-center mt-5">
+          <button type="submit" id="uploadButton" class="btn btn-primary btn-lg">
+            <span id="buttonText">Upload & Generate</span>
+            <span id="loadingSpinner" class="spinner-border spinner-border-sm ms-2 d-none"></span>
+          </button>
         </div>
       </form>
     </div>
   </main>
-  
 
-  <!-- {% if messages %}
-  {% for message in messages %}
-      <script>
-          if (confirm("{{ message }}")) {
-              window.location.href = "{% url 'login' %}";
-          }
-      </script>
-  {% endfor %}
-{% endif %} -->
-
-  
-
-  <!-- Footer -->
-  <footer class="bg-dark text-white mt-auto">
-    <div class="container py-4">
-      <div class="row">
-        <!-- Quick Links -->
-        <div class="col-md-4 mb-3">
-          <h5 class="fw-bold">Quick Links</h5>
-          <ul class="list-unstyled">
-            <li><a href="#" class="text-white text-decoration-none">Privacy Policy</a></li>
-            <li><a href="#" class="text-white text-decoration-none">Terms of Service</a></li>
-            <li><a href="#" class="text-white text-decoration-none">Contact Us</a></li>
-          </ul>
+  <!-- Premium Footer -->
+  <footer>
+    <div class="container">
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="footer-section">
+            <h4>Quick Links</h4>
+            <a href="{% url 'payment' %}">Pricing</a>
+            <a href="{% url 'help' %}">Help</a>
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Service</a>
+          </div>
         </div>
-        <!-- Contact Information -->
-        <div class="col-md-4 mb-3">
-          <h5 class="fw-bold">Contact Information</h5>
-          <p><i class="bi bi-geo-alt me-2"></i>Kanchanwadi, Chh. Sambhajinagar, Maharashtra</p>
-          <p><i class="bi bi-envelope me-2"></i><a href="mailto:info@SaraAnsh.com" class="text-white text-decoration-none">info@SaraAnsh.com</a></p>
-          <p><i class="bi bi-telephone me-2"></i>+91 9876543210</p>
+        <div class="col-md-4">
+          <div class="footer-section">
+            <h4>Contact Information</h4>
+            <p><i class="bi bi-geo-alt"></i> Sravan PG, 3rd Cross, Kundahalli Colony, Bengaluru</p>
+            <p><i class="bi bi-envelope"></i> <a href="mailto:utsi22ise@cmrit.ac.in">utsi22ise@cmrit.ac.in</a></p>
+            <p><i class="bi bi-telephone"></i> +917906437783</p>
+          </div>
         </div>
-        <!-- Social Media -->
-        <div class="col-md-4 mb-3">
-          <h5 class="fw-bold">Follow Us</h5>
-          <div>
-            <a href="#" class="text-white me-3" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
-            <a href="#" class="text-white me-3" aria-label="Twitter"><i class="bi bi-twitter"></i></a>
-            <a href="#" class="text-white me-3" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
-            <a href="#" class="text-white me-3" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
-            <a href="#" class="text-white me-3" aria-label="YouTube"><i class="bi bi-youtube"></i></a>
+        <div class="col-md-4">
+          <div class="footer-section">
+            <h4>Follow Us</h4>
+            <div class="social-icons">
+              <a href="https://www.facebook.com/share/1B53E3tMqC/" target="_blank" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+              <a href="https://www.instagram.com/utkarshsingh.me?igsh=MTBud2M1ZHcyeXFyaA==" target="_blank" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+              <a href="https://www.linkedin.com/in/utkarsh746?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" target="_blank" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
+            </div>
           </div>
         </div>
       </div>
+      <div class="footer-copyright">
+        &copy; 2025 ResearchRadar. All rights reserved.
+      </div>
     </div>
-    <div class="bg-secondary text-center py-2">
-      &copy; 2024 SaraAnsh. All rights reserved.
-    </div>
-
-    <script type="text/javascript">
-      document.getElementById("uploadButton").onclick = function(event) {
-          event.preventDefault();  // Prevent form submission
-  
-          // Show the alert
-          alert("You should sign up or login first");
-  
-          // Redirect to login page after clicking OK on the alert
-          window.location.href = "{% url 'login' %}";  // Use URL name to navigate to the login page
-      };
-  </script>
   </footer>
 
-  <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
+  <script>
+    const fileUploadArea = document.getElementById('fileUploadArea');
+    const fileInput = document.getElementById('dataFile');
+    const uploadForm = document.getElementById('uploadForm');
+    const uploadButton = document.getElementById('uploadButton');
+    const buttonText = document.getElementById('buttonText');
+    const loadingSpinner = document.getElementById('loadingSpinner');
 
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+      fileUploadArea.addEventListener(eventName, preventDefaults, false);
+    });
+
+    function preventDefaults(e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+      fileUploadArea.addEventListener(eventName, () => {
+        fileUploadArea.classList.add('dragover');
+      }, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      fileUploadArea.addEventListener(eventName, () => {
+        fileUploadArea.classList.remove('dragover');
+      }, false);
+    });
+
+    fileUploadArea.addEventListener('drop', handleDrop, false);
+
+    function handleDrop(e) {
+      const dt = e.dataTransfer;
+      const files = dt.files;
+      fileInput.files = files;
+    }
+
+    fileInput.addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const validTypes = ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.ms-excel'];
+        if (!validTypes.includes(file.type) && !file.name.endsWith('.xlsx') && !file.name.endsWith('.xls')) {
+          alert('Invalid file type. Please upload an Excel file (.xlsx or .xls).');
+          fileInput.value = '';
+          return;
+        }
+        if (file.size > 10 * 1024 * 1024) {
+          alert('File size is too large. Please upload a file smaller than 10MB.');
+          fileInput.value = '';
+          return;
+        }
+      }
+    });
+
+    uploadForm.addEventListener('submit', function() {
+      buttonText.textContent = 'Uploading...';
+      loadingSpinner.classList.remove('d-none');
+      uploadButton.disabled = true;
+    });
+  </script>
+</body>
 </html>

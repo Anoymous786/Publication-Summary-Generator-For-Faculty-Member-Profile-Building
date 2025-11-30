@@ -1,74 +1,269 @@
-<!DOCTYPE html>
 {% load static %}
+<!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SaraAnsh - Generate Summary</title>
+  <title>ResearchRadar - Generate Summary</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="{% static 'styles.css' %}">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="{% static 'premium-design.css' %}">
   <style>
-    /* Initially hide the summary and visualization preview */
-    #summaryDisplay,
-    #visualizationDisplay {
-      display: none;
+    body {
+      background: var(--color-surface-elevated);
     }
-
-    .graph-img {
-      height: 300px;
-      /* Set a uniform height for graphs */
-      width: 100%;
-      /* Make graphs responsive */
-      display: none;
-      /* Initially hide graphs */
+    
+    .page-header {
+      text-align: center;
+      margin-bottom: var(--space-12);
+      padding: var(--space-8) 0;
     }
-
-    .navbar {
-      background: linear-gradient(90deg, rgb(112, 128, 144), rgb(192, 192, 192));
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    
+    .page-icon {
+      width: 100px;
+      height: 100px;
+      background: var(--gradient-primary);
+      border-radius: var(--radius-full);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto var(--space-6);
+      box-shadow: var(--shadow-glow);
     }
-
-    .navbar-brand {
-      font-weight: bold;
-      font-size: 1.75rem;
+    
+    .page-icon i {
+      font-size: 3rem;
       color: white;
     }
-
-    .nav-item {
-      padding: 0px 10px;
+    
+    .page-header h2 {
+      font-size: var(--text-4xl);
+      font-weight: 700;
+      color: var(--color-text-primary);
+      margin-bottom: var(--space-4);
+    }
+    
+    .page-header p {
+      font-size: var(--text-lg);
+      color: var(--color-text-secondary);
+    }
+    
+    .filter-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-2xl);
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      margin-bottom: var(--space-8);
+    }
+    
+    .filter-card-header {
+      background: var(--gradient-primary);
+      color: white;
+      padding: var(--space-5);
+    }
+    
+    .filter-card-body {
+      padding: var(--space-8);
+    }
+    
+    .form-label {
+      font-weight: 600;
+      color: var(--color-text-primary);
+      margin-bottom: var(--space-3);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+    
+    .form-label i {
+      color: var(--color-primary);
+    }
+    
+    .action-buttons {
+      display: flex;
+      gap: var(--space-3);
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: var(--space-6);
+    }
+    
+    .table-container {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+      margin-top: var(--space-8);
+    }
+    
+    .table thead {
+      background: var(--gradient-primary);
+      color: white;
+    }
+    
+    .table thead th {
+      border: none;
+      padding: var(--space-4);
+      font-weight: 600;
+    }
+    
+    .table tbody tr {
+      transition: all var(--transition-fast);
+    }
+    
+    .table tbody tr:hover {
+      background: var(--color-surface-hover);
     }
 
-    .navbar-nav .nav-link {
-      font-weight: bold;
-      font-size: 1.25rem;
-      padding: 0px 7px;
-      /* Increased space around navbar text */
+    .researcher-chat-widget {
+      position: fixed;
+      right: 2rem;
+      bottom: 2rem;
+      z-index: 1080;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: var(--space-3);
     }
 
-    .navbar-nav .nav-link:hover {
-      color: #d4d4d4;
+    .chat-toggle-btn {
+      border: none;
+      border-radius: var(--radius-full);
+      padding: var(--space-3) var(--space-6);
+      background: var(--gradient-primary);
+      color: white;
+      font-weight: 600;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .chat-panel {
+      width: min(360px, 90vw);
+      max-height: 520px;
+      background: var(--color-surface);
+      border-radius: var(--radius-2xl);
+      border: 1px solid var(--color-border);
+      box-shadow: var(--shadow-2xl);
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .chat-panel.open {
+      display: flex;
+    }
+
+    .chat-header {
+      padding: var(--space-5);
+      background: var(--gradient-primary);
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .chat-body {
+      padding: var(--space-5);
+      overflow-y: auto;
+      gap: var(--space-3);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chat-footer {
+      padding: var(--space-4);
+      border-top: 1px solid var(--color-border);
+      display: flex;
+      gap: var(--space-3);
+      align-items: flex-end;
+    }
+
+    .chat-footer textarea {
+      flex: 1;
+      resize: none;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--color-border);
+      padding: var(--space-3);
+      min-height: 60px;
+      background: var(--color-surface-elevated);
+      color: var(--color-text-primary);
+    }
+
+    .chat-footer button {
+      border: none;
+      border-radius: var(--radius-full);
+      padding: var(--space-3) var(--space-5);
+      background: var(--color-primary);
+      color: white;
+      font-weight: 600;
+    }
+
+    .message {
+      border-radius: var(--radius-xl);
+      padding: var(--space-3);
+      max-width: 90%;
+      font-size: var(--text-sm);
+      line-height: 1.4;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .message.user {
+      background: var(--color-primary-weak);
+      align-self: flex-end;
+      color: var(--color-primary-dark);
+    }
+
+    .message.assistant {
+      background: var(--color-surface-hover);
+      align-self: flex-start;
+      color: var(--color-text-primary);
+    }
+
+    .message .citations {
+      margin-top: var(--space-2);
+      font-size: var(--text-xs);
+      color: var(--color-text-secondary);
+    }
+
+    .chat-close-btn {
+      border: none;
+      background: transparent;
+      color: white;
+      font-size: var(--text-xl);
+      line-height: 1;
+    }
+
+    @media (max-width: 576px) {
+      .researcher-chat-widget {
+        right: 1rem;
+        bottom: 1rem;
+      }
+      .chat-panel {
+        width: 100%;
+        max-height: 70vh;
+      }
     }
   </style>
 </head>
-
 <body>
-
-  <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-dark">
-    <div class="container p-1">
-      <a class="navbar-brand" href="#"><i class="bi bi-file-ppt-fill"></i>&nbsp;&nbsp;SaraAnsh</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+  <!-- Premium Navbar -->
+  <nav class="navbar navbar-expand-lg">
+    <div class="container">
+      <a class="navbar-brand" href="{% url 'home' %}">
+        <i class="bi bi-file-ppt-fill"></i>
+        <span>ResearchRadar</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
           <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
           <li class="nav-item"><a class="nav-link" href="{% url 'upload' %}">Upload</a></li>
-          <li class="nav-item"><a class="nav-link" href="{% url 'generatesummary' %}">Generate Summary</a></li>
+          <li class="nav-item"><a class="nav-link active" href="{% url 'generatesummary' %}">Generate Summary</a></li>
           <li class="nav-item"><a class="nav-link" href="{% url 'settings' %}">Settings</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'payment' %}">Pricing</a></li>
           <li class="nav-item"><a class="nav-link" href="{% url 'help' %}">Help</a></li>
           <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">logout</a></li>
         </ul>
@@ -76,113 +271,265 @@
     </div>
   </nav>
 
-  <!-- Generate Summary Page Content -->
+  <!-- Generate Summary Content -->
   <div class="container my-5">
-    <h2>Generate Publication Summary</h2>
-
-    <form method="POST" action="{% url 'generatesummary' %}" enctype="multipart/form-data">
-      {% csrf_token %}
-      <div class="row">
-        <div class="col-md-4 mb-3">
-          <label for="facultySelect" class="form-label">Select Faculty Member</label>
-          <select class="form-select" id="facultySelect" name="facultySelect">
-            <option selected>All</option>
-            <option>All</option>
-            {% for author in authors %}
-            <option>{{ author }}</option>
-            {% endfor %}
-          </select>
-        </div>
-        <div class="col-md-4 mb-3">
-          <label for="startYear" class="form-label">Start Year</label>
-          <input type="number" class="form-control" id="startYear" name="startYear" placeholder="YYYY">
-        </div>
-        <div class="col-md-4 mb-3">
-          <label for="endYear" class="form-label">End Year</label>
-          <input type="number" class="form-control" id="endYear" name="endYear" placeholder="YYYY">
-        </div>
-        <div class="col-md-4 mb-3">
-          <label for="publicationType" class="form-label">Publication Type</label>
-          <select class="form-select" id="publicationType" name="publicationType">
-            <option selected>All</option>
-            <option>Journal</option>
-            <option>Conference</option>
-            <option>Book Chapter</option>
-          </select>
-        </div>
-        <div class="col-md-4 mb-3">
-          <label for="sortBy" class="form-label">Sort By</label>
-          <select class="form-select" id="sortBy" name="sortBy">
-            <option selected>Choose...</option>
-            <option>Date</option>
-            <option>Citation Count</option>
-          </select>
-
-        </div>
-        <div class="d-inline-flex gap-4">
-          <button type="submit" class="btn btn-primary" id="generateSummary" name="generateSummary"> Generate
-            Summary</button>
-          <button type="submit" class="btn btn-primary" id="downloadSummary" name="downloadSummary">Download
-            Summary</button>
-          <div class="d-inline-flex gap-4">
-            <a href="{% url 'dynamic_graph' %}" class="btn btn-primary" id="generateVisualization"
-              name="generateVisualization">Generate Visualization</a>
-            <a href="{% url 'cust' %}" class="btn btn-primary " id="new records">New Records</a>
-            <a href="{% url 'missVal' %}" class="btn btn-primary " id="AddCustoms">Add Customs</a>
-          </div>
-
-        </div>
+    <div class="page-header animate-fade-in">
+      <div class="page-icon">
+        <i class="bi bi-graph-up"></i>
       </div>
-    </form>
-    <div class="table-responsive">
-      <!-- Render the table HTML -->
-      {{ data|safe }}
+      <h2>Generate Publication Summary</h2>
+      <p>Create comprehensive summaries and visualizations of your research publications</p>
+    </div>
+
+    <div class="filter-card animate-scale-in">
+      <div class="filter-card-header">
+        <h5 class="mb-0" style="font-size: var(--text-xl);">
+          <i class="bi bi-sliders me-2"></i>Filter Options
+        </h5>
+      </div>
+      <div class="filter-card-body">
+        <form method="POST" action="{% url 'generatesummary' %}" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="row g-4">
+            <div class="col-md-4">
+              <label for="facultySelect" class="form-label">
+                <i class="bi bi-person"></i>Select Faculty Member
+              </label>
+              <select class="form-control" id="facultySelect" name="facultySelect">
+                <option selected>All</option>
+                {% for author in authors %}
+                <option>{{ author }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label for="startYear" class="form-label">
+                <i class="bi bi-calendar3"></i>Start Year
+              </label>
+              <input type="number" class="form-control" id="startYear" name="startYear" placeholder="YYYY">
+            </div>
+            <div class="col-md-4">
+              <label for="endYear" class="form-label">
+                <i class="bi bi-calendar3"></i>End Year
+              </label>
+              <input type="number" class="form-control" id="endYear" name="endYear" placeholder="YYYY">
+            </div>
+            <div class="col-md-4">
+              <label for="publicationType" class="form-label">
+                <i class="bi bi-file-text"></i>Publication Type
+              </label>
+              <select class="form-control" id="publicationType" name="publicationType">
+                <option selected>All</option>
+                <option>Journal</option>
+                <option>Conference</option>
+                <option>Book Chapter</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label for="sortBy" class="form-label">
+                <i class="bi bi-sort-down"></i>Sort By
+              </label>
+              <select class="form-control" id="sortBy" name="sortBy">
+                <option selected>Choose...</option>
+                <option>Date</option>
+                <option>Citation Count</option>
+              </select>
+            </div>
+          </div>
+          <div class="action-buttons">
+            <button type="submit" class="btn btn-primary btn-lg" id="generateSummary" name="generateSummary">
+              <i class="bi bi-magic me-2"></i>Generate Summary
+            </button>
+            <button type="submit" class="btn btn-secondary btn-lg" id="downloadSummary" name="downloadSummary">
+              <i class="bi bi-download me-2"></i>Download Summary
+            </button>
+            <a href="{% url 'dynamic_graph' %}" class="btn btn-primary btn-lg">
+              <i class="bi bi-graph-up me-2"></i>Generate Visualization
+            </a>
+            <a href="{% url 'cust' %}" class="btn btn-secondary btn-lg">
+              <i class="bi bi-plus-circle me-2"></i>New Records
+            </a>
+            <a href="{% url 'missVal' %}" class="btn btn-secondary btn-lg">
+              <i class="bi bi-pencil me-2"></i>Add Customs
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+    
+    <div class="table-container">
+      <div class="table-responsive">
+        {{ data|safe }}
+      </div>
     </div>
   </div>
 
-
-
-  <!-- Footer -->
-  <footer class="bg-dark text-white mt-auto">
-    <div class="container  my-5">
-      <div class="row">
-        <!-- Quick Links -->
-        <div class="col-md-4 mb-3">
-          <h5 class="fw-bold">Quick Links</h5>
-          <ul class="list-unstyled">
-            <li><a href="#" class="text-white text-decoration-none">Privacy Policy</a></li>
-            <li><a href="#" class="text-white text-decoration-none">Terms of Service</a></li>
-            <li><a href="#" class="text-white text-decoration-none">Contact Us</a></li>
-          </ul>
+  <!-- Chat with the Researcher Widget -->
+  <div class="researcher-chat-widget">
+    <button class="chat-toggle-btn shadow" id="chatToggle">
+      <i class="bi bi-chat-dots me-2"></i> Chat with the Researcher
+    </button>
+    <div class="chat-panel" id="chatPanel" aria-live="polite">
+      <div class="chat-header">
+        <div>
+          <strong>Chat with the Researcher</strong>
+          <p class="mb-0" style="font-size: var(--text-xs); opacity: 0.9;">
+            Ask targeted questions about the publications below.
+          </p>
         </div>
-        <!-- Contact Information -->
-        <div class="col-md-4 mb-3">
-          <h5 class="fw-bold">Contact Information</h5>
-          <p><i class="bi bi-geo-alt me-2"></i>Kanchanwadi, Chh. Sambhajinagar, Maharashtra</p>
-          <p><i class="bi bi-envelope me-2"></i><a href="mailto:info@SaraAnsh.com"
-              class="text-white text-decoration-none">info@SaraAnsh.com</a></p>
-          <p><i class="bi bi-telephone me-2"></i>+91 9876543210</p>
+        <button class="chat-close-btn" id="chatClose" aria-label="Close chat">&times;</button>
+      </div>
+      <div class="chat-body" id="chatMessages">
+        <div class="message assistant">
+          Hi! I can answer questions based on the publications you uploaded. Try asking “What are the latest findings on Covid-19?”
         </div>
-        <!-- Social Media -->
-        <div class="col-md-4 mb-3">
-          <h5 class="fw-bold">Follow Us</h5>
-          <div>
-            <a href="#" class="text-white me-3" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
-            <a href="#" class="text-white me-3" aria-label="Twitter"><i class="bi bi-twitter"></i></a>
-            <a href="#" class="text-white me-3" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
-            <a href="#" class="text-white me-3" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
-            <a href="#" class="text-white me-3" aria-label="YouTube"><i class="bi bi-youtube"></i></a>
+      </div>
+      <div class="chat-footer">
+        <textarea id="chatInput" placeholder="Type your question..." aria-label="Chat message"></textarea>
+        <button type="button" id="chatSend">
+          <span class="default-label">Send</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Premium Footer -->
+  <footer>
+    <div class="container">
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="footer-section">
+            <h4>Quick Links</h4>
+            <a href="{% url 'payment' %}">Pricing</a>
+            <a href="{% url 'help' %}">Help</a>
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Service</a>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="footer-section">
+            <h4>Contact Information</h4>
+            <p><i class="bi bi-geo-alt"></i> Sravan PG, 3rd Cross, Kundahalli Colony, Bengaluru</p>
+            <p><i class="bi bi-envelope"></i> <a href="mailto:utsi22ise@cmrit.ac.in">utsi22ise@cmrit.ac.in</a></p>
+            <p><i class="bi bi-telephone"></i> +917906437783</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="footer-section">
+            <h4>Follow Us</h4>
+            <div class="social-icons">
+              <a href="https://www.facebook.com/share/1B53E3tMqC/" target="_blank" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+              <a href="https://www.instagram.com/utkarshsingh.me?igsh=MTBud2M1ZHcyeXFyaA==" target="_blank" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+              <a href="https://www.linkedin.com/in/utkarsh746?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" target="_blank" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    <div class="bg-secondary text-center py-2">
-      &copy; 2024 SaraAnsh. All rights reserved.
+      <div class="footer-copyright">
+        &copy; 2025 ResearchRadar. All rights reserved.
+      </div>
     </div>
   </footer>
 
-  <!-- Bootstrap Bundle with Popper -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
+  <script>
+    (function() {
+      const chatToggle = document.getElementById('chatToggle');
+      const chatPanel = document.getElementById('chatPanel');
+      const chatClose = document.getElementById('chatClose');
+      const chatSend = document.getElementById('chatSend');
+      const chatInput = document.getElementById('chatInput');
+      const chatMessages = document.getElementById('chatMessages');
+      const endpoint = "{% url 'chat_with_researcher' %}";
 
+      const getCookie = (name) => {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+        return null;
+      };
+
+      const getCsrfToken = () => {
+        const formToken = document.querySelector('input[name="csrfmiddlewaretoken"]');
+        if (formToken) {
+          return formToken.value;
+        }
+        return getCookie('csrftoken');
+      };
+
+      const togglePanel = (forceOpen = null) => {
+        const nextState = forceOpen !== null ? forceOpen : !chatPanel.classList.contains('open');
+        chatPanel.classList.toggle('open', nextState);
+      };
+
+      const appendMessage = (content, role = 'assistant', citations = []) => {
+        const bubble = document.createElement('div');
+        bubble.className = `message ${role}`;
+        bubble.innerHTML = content;
+
+        if (citations.length) {
+          const citationEl = document.createElement('div');
+          citationEl.className = 'citations';
+          citationEl.innerHTML = `Sources:<br>${citations.map(
+            (item) => `• ${item.title} (${item.year})${item.venue ? ' – ' + item.venue : ''}`
+          ).join('<br>')}`;
+          bubble.appendChild(citationEl);
+        }
+
+        chatMessages.appendChild(bubble);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      };
+
+      const setLoadingState = (isLoading) => {
+        chatSend.disabled = isLoading;
+        chatInput.disabled = isLoading;
+        chatSend.innerHTML = isLoading
+          ? '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Thinking...'
+          : '<span class="default-label">Send</span>';
+      };
+
+      const sendMessage = async () => {
+        const query = chatInput.value.trim();
+        if (!query || chatSend.disabled) return;
+
+        appendMessage(query, 'user');
+        chatInput.value = '';
+        setLoadingState(true);
+
+        try {
+          const response = await fetch(endpoint, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRFToken': getCsrfToken()
+            },
+            body: JSON.stringify({ query })
+          });
+
+          const data = await response.json();
+          if (!response.ok || data.error) {
+            throw new Error(data.error || 'Unable to fetch answer.');
+          }
+
+          appendMessage(data.answer, 'assistant', data.citations || []);
+        } catch (error) {
+          appendMessage(error.message || 'Something went wrong. Please try again.', 'assistant');
+        } finally {
+          setLoadingState(false);
+        }
+      };
+
+      chatToggle.addEventListener('click', () => togglePanel());
+      chatClose.addEventListener('click', () => togglePanel(false));
+      chatSend.addEventListener('click', sendMessage);
+
+      chatInput.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' && !event.shiftKey) {
+          event.preventDefault();
+          sendMessage();
+        }
+      });
+    })();
+  </script>
+</body>
 </html>
