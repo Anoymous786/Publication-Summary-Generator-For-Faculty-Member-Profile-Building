@@ -1,185 +1,167 @@
-{% load static %}
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ResearchRadar - Settings</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <title>ResearchRader - Settings</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'styles.css' %}">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-  <link rel="stylesheet" href="{% static 'premium-design.css' %}">
   <style>
-    body {
-      background: var(--color-surface-elevated);
-    }
-    
     .settings-container {
-      padding: var(--space-12) 0;
+      background-color: #f8f9fa;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
-    
-    .settings-header {
-      text-align: center;
-      margin-bottom: var(--space-12);
+    .settings-container h2 {
+      font-size: 2rem;
+      font-weight: 500;
+      color: #333;
     }
-    
-    .settings-header h2 {
-      font-size: var(--text-4xl);
-      font-weight: 700;
-      color: var(--color-text-primary);
-      margin-bottom: var(--space-4);
+    .settings-container h3 {
+      font-size: 1.5rem;
+      font-weight: 500;
+      color: #444;
     }
-    
-    .settings-section {
-      background: var(--color-surface);
-      border: 1px solid var(--color-border);
-      border-radius: var(--radius-2xl);
-      padding: var(--space-8);
-      margin-bottom: var(--space-8);
-      box-shadow: var(--shadow-md);
-    }
-    
-    .settings-section h3 {
-      font-size: var(--text-2xl);
-      font-weight: 600;
-      color: var(--color-text-primary);
-      margin-bottom: var(--space-6);
-      padding-bottom: var(--space-4);
-      border-bottom: 2px solid var(--color-border);
-    }
-    
     .form-label {
-      font-weight: 600;
-      color: var(--color-text-primary);
-      margin-bottom: var(--space-3);
+      font-weight: 500;
     }
+    .btn-warning {
+      background-color: #ffc107;
+      border-color: #ffc107;
+    }
+    .btn-warning:hover {
+      background-color: #e0a800;
+      border-color: #d39e00;
+    }
+    .navbar {
+                background: linear-gradient(90deg, rgb(112, 128, 144), rgb(192, 192, 192));
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            }
     
-    .form-check-label {
-      font-weight: 400;
-      color: var(--color-text-secondary);
-    }
+            .navbar-brand {
+                font-weight: bold;
+                font-size: 1.75rem;
+                color: white;
+            }
+    
+            .nav-item{
+                padding: 0px 10px;
+            }       
+    
+            .navbar-nav .nav-link {
+                font-weight: bold;
+                font-size: 1.25rem;
+                padding: 0px 7px; /* Increased space around navbar text */
+            }
+    
+            .navbar-nav .nav-link:hover {
+                color: #d4d4d4;
+            }
   </style>
 </head>
 <body>
-  <!-- Premium Navbar -->
-  <nav class="navbar navbar-expand-lg">
-    <div class="container">
-      <a class="navbar-brand" href="{% url 'home' %}">
-        <i class="bi bi-file-ppt-fill"></i>
-        <span>ResearchRadar</span>
-      </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container p-1">
+      <a class="navbar-brand" href="#"><i class="bi bi-file-ppt-fill"></i>&nbsp;&nbsp;ResearchRader</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
-          <li class="nav-item"><a class="nav-link" href="{% url 'upload' %}">Upload</a></li>
-          <li class="nav-item"><a class="nav-link" href="{% url 'generatesummary' %}">Generate Summary</a></li>
-          <li class="nav-item"><a class="nav-link active" href="{% url 'settings' %}">Settings</a></li>
-          <li class="nav-item"><a class="nav-link" href="{% url 'payment' %}">Pricing</a></li>
-          <li class="nav-item"><a class="nav-link" href="{% url 'help' %}">Help</a></li>
-          <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">logout</a></li>
-        </ul>
-      </div>
-    </div>
-  </nav>
-
-  <!-- Settings Content -->
-  <div class="container settings-container">
-    <div class="settings-header animate-fade-in">
-      <h2>Settings</h2>
-      <p style="color: var(--color-text-secondary);">Customize your ResearchRadar experience</p>
-    </div>
-    
-    <!-- Report Customization -->
-    <div class="settings-section animate-scale-in">
-      <h3><i class="bi bi-sliders me-2"></i>Report Customization</h3>
-      <form>
-        <div class="mb-4">
-          <label for="citationStyle" class="form-label">Citation Style</label>
-          <select class="form-control" id="citationStyle">
-            <option selected>APA</option>
-            <option>IEEE</option>
-            <option>MLA</option>
-          </select>
-        </div>
-        <div class="mb-4">
-          <label class="form-label">Include/Exclude Metrics</label>
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" id="includeHIndex" checked>
-            <label class="form-check-label" for="includeHIndex">h-index</label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" id="includeCitationCount" checked>
-            <label class="form-check-label" for="includeCitationCount">Citation Count</label>
-          </div>
-        </div>
-        <button type="submit" class="btn btn-primary">Save Changes</button>
-      </form>
-    </div>
-
-    <!-- Data Management -->
-    <div class="settings-section animate-scale-in" style="animation-delay: 0.1s">
-      <h3><i class="bi bi-database me-2"></i>Data Management</h3>
-      <form>
-        <div class="mb-4">
-          <label for="updateFaculty" class="form-label">Update Faculty Information</label>
-          <input type="text" class="form-control" id="updateFaculty" placeholder="Add or update faculty names">
-        </div>
-        <div class="mb-4">
-          <label class="form-label">Backup/Restore Data</label>
-          <div class="d-flex gap-3">
-            <button type="button" class="btn btn-warning">
-              <i class="bi bi-download me-2"></i>Backup
-            </button>
-            <button type="button" class="btn btn-warning">
-              <i class="bi bi-upload me-2"></i>Restore
-            </button>
-          </div>
-        </div>
-      </form>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'upload' %}">Upload</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'generatesummary' %}">Generate Summary</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'settings' %}">Settings</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'help' %}">Help</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">logout</a></li>
+     
+      </ul>
     </div>
   </div>
+</nav>
 
-  <!-- Premium Footer -->
-  <footer>
-    <div class="container">
-      <div class="row g-4">
-        <div class="col-md-4">
-          <div class="footer-section">
-            <h4>Quick Links</h4>
-            <a href="{% url 'payment' %}">Pricing</a>
-            <a href="{% url 'help' %}">Help</a>
-            <a href="#">Privacy Policy</a>
-            <a href="#">Terms of Service</a>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="footer-section">
-            <h4>Contact Information</h4>
-            <p><i class="bi bi-geo-alt"></i> Sravan PG, 3rd Cross, Kundahalli Colony, Bengaluru</p>
-            <p><i class="bi bi-envelope"></i> <a href="mailto:utsi22ise@cmrit.ac.in">utsi22ise@cmrit.ac.in</a></p>
-            <p><i class="bi bi-telephone"></i> +917906437783</p>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="footer-section">
-            <h4>Follow Us</h4>
-            <div class="social-icons">
-              <a href="https://www.facebook.com/share/1B53E3tMqC/" target="_blank" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
-              <a href="https://www.instagram.com/utkarshsingh.me?igsh=MTBud2M1ZHcyeXFyaA==" target="_blank" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
-              <a href="https://www.linkedin.com/in/utkarsh746?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" target="_blank" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
-            </div>
-          </div>
-        </div>
+<!-- Settings Page Content -->
+<div class="container my-5 settings-container">
+  <h2>Settings</h2>
+  
+  <!-- Report Customization -->
+  <h3>Report Customization</h3>
+  <form>
+    <div class="mb-3">
+      <label for="citationStyle" class="form-label">Citation Style</label>
+      <select class="form-select" id="citationStyle">
+        <option selected>APA</option>
+        <option>IEEE</option>
+        <option>MLA</option>
+      </select>
+    </div>
+    <div class="mb-3">
+      <label for="includeMetrics" class="form-label">Include/Exclude Metrics</label>
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="includeHIndex" checked>
+        <label class="form-check-label" for="includeHIndex">h-index</label>
       </div>
-      <div class="footer-copyright">
-        &copy; 2025 ResearchRadar. All rights reserved.
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="includeCitationCount" checked>
+        <label class="form-check-label" for="includeCitationCount">Citation Count</label>
       </div>
     </div>
-  </footer>
+  </form>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Data Management -->
+  <h3>Data Management</h3>
+  <form>
+    <div class="mb-3">
+      <label for="updateFaculty" class="form-label">Update Faculty Information</label>
+      <input type="text" class="form-control" id="updateFaculty" placeholder="Add or update faculty names">
+    </div>
+    <div class="mb-3">
+      <label for="backupRestore" class="form-label">Backup/Restore Data</label>
+      <div class="d-flex gap-3">
+        <button type="button" class="btn btn-warning">Backup</button>
+        <button type="button" class="btn btn-warning">Restore</button>
+      </div>
+    </div>
+  </form>
+</div>
+
+<!-- Footer -->
+<footer>
+  <div class="container">
+      <div class="footer-section footer-links">
+          <h4>Quick Links</h4>
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+          <a href="#">Contact Us</a>
+      </div>
+      <div class="footer-section footer-contact">
+          <h4>Contact Information</h4>
+          <p><i class="bi bi-geo-alt"></i> Kanchanwadi, Chh. Sambhajinagar, Maharashtra</p>
+          <p><i class="bi bi-envelope"></i> <a href="mailto:info@pubsum.com">info@ResearchRader.com</a></p>
+          <p><i class="bi bi-telephone"></i> +91 9876543210</p>
+      </div>
+      <div class="footer-section footer-social">
+          <h4>Follow Us</h4>
+          <div class="social-icons">
+              <a href="#" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+              <a href="#" aria-label="Twitter"><i class="bi bi-twitter"></i></a>
+              <a href="#" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+              <a href="#" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
+              <a href="#" aria-label="YouTube"><i class="bi bi-youtube"></i></a>
+          </div>
+      </div>
+  </div>
+  <div class="footer-copyright">
+      &copy; 2024 ResearchRader. All rights reserved.
+  </div>
+</footer>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

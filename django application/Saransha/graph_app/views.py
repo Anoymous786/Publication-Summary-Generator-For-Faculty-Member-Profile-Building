@@ -3,21 +3,24 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import io
 import base64
+import json
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
+from django.views.decorators.http import require_POST
 import matplotlib
 matplotlib.use('Agg')
 from django.conf import settings
 from Saransha.utils import generate_author_summary, generate_publication_summary
 from django.core.files.storage import FileSystemStorage
 
+
 def dynamic_graph(request):
     return render(request, "graph_app/dynamic_graph.html")
+
 
 def dynamic_graph_view(request):
     """
     Generate dynamic graphs for publication data visualization.
-    Requires either 'output.xlsx' (from generate summary) or 'all_authors_publications.xlsx' (from upload).
     """
     error_message = None
     graph1 = None
@@ -27,7 +30,7 @@ def dynamic_graph_view(request):
     try:
         fs = FileSystemStorage()
         
-        # Try to find the data file - check output.xlsx first (from generate summary), then all_authors_publications.xlsx
+        # Try to find the data file
         output_file_path = None
         if fs.exists("output.xlsx"):
             output_file_path = fs.path("output.xlsx")
@@ -172,3 +175,37 @@ def dynamic_graph_view(request):
         'graph3': graph3,
         'error_message': error_message
     })
+
+
+@require_POST
+def chat_with_researcher(request):
+    """
+    Handle chat queries about publications.
+    """
+    try:
+        data = json.loads(request.body)
+        query = data.get('query', '')
+        
+        # Try to load publications data for context
+        fs = FileSystemStorage()
+        publications_count = 0
+        
+        if fs.exists("all_authors_publications.xlsx"):
+            try:
+                df = pd.read_excel(fs.path("all_authors_publications.xlsx"))
+                publications_count = len(df)
+            except Exception:
+                pass
+        
+        # Placeholder response - you can integrate with an AI API here
+        response_data = {
+            'answer': f'You asked: "{query}". I have access to {publications_count} publications. This feature will be enhanced with AI capabilities soon.',
+            'citations': []
+        }
+        
+        return JsonResponse(response_data)
+    
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)

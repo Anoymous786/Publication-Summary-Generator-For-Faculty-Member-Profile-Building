@@ -58,13 +58,23 @@
             max-width: 1000px;
             margin: 50px auto;
             background: #fff;
-            padding: 20px;
-            border-radius: 8px;
+            padding: 30px;
+            border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
         .form-container h2 {
             text-align: center;
             margin-bottom: 20px;
+            color: #333;
+        }
+        
+        .alert {
+            margin-bottom: 20px;
+        }
+        
+        .btn-lg {
+            padding: 12px 30px;
+            font-size: 1.1rem;
         }
     </style>
 </head>
@@ -86,7 +96,6 @@
                     <li class="nav-item"><a class="nav-link" href="{% url 'generatesummary' %}">Generate Summary</a>
                     </li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'settings' %}">Settings</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'payment' %}">Pricing</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'help' %}">Help</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">logout</a></li>
                 </ul>
@@ -94,10 +103,21 @@
         </div>
     </nav>
     <div class="form-container">
-        
-                    <h2>Update Publication Details</h2>
-                    <form action="" method="POST">
-                        {% csrf_token %}
+        <h2>Add/Update Missing Publication Details</h2>
+        {% if success_message %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ success_message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endif %}
+        {% if error_message %}
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ error_message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endif %}
+        <form action="{% url 'missVal' %}" method="POST">
+            {% csrf_token %}
                         <div class="mb-3">
                             <label for="authorSelect" class="form-label">Select Author</label>
                             <select id="authorSelect" class="form-select" onchange="location = this.value;">
@@ -133,8 +153,9 @@
                             <input type="number" class="form-control" id="year" name="year" placeholder="Enter year" min="1900" max="2100" value="{{ prefill_data.year }}">
                         </div>
 
-                        <div class="text-center">
-                            <button type="submit"  class="btn btn-primary">Submit</button>
+                        <div class="text-center mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg">Update Publication</button>
+                            <a href="{% url 'generatesummary' %}" class="btn btn-secondary btn-lg ms-2">Back to Generate Summary</a>
                         </div>
                     </form>
                
