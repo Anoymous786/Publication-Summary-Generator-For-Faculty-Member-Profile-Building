@@ -204,6 +204,9 @@
           <li class="nav-item"><a class="nav-link active" href="{% url 'upload' %}">Upload</a></li>
           <li class="nav-item"><a class="nav-link" href="{% url 'generatesummary' %}">Generate Summary</a></li>
           <li class="nav-item"><a class="nav-link" href="{% url 'settings' %}">Settings</a></li>
+          {% if is_faculty %}
+          <li class="nav-item"><a class="nav-link" href="{% url 'faculty_profile' %}"><i class="bi bi-person-circle"></i> My Profile</a></li>
+          {% endif %}
           <li class="nav-item"><a class="nav-link" href="{% url 'payment' %}">Pricing</a></li>
           <li class="nav-item"><a class="nav-link" href="{% url 'help' %}">Help</a></li>
           <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">logout</a></li>
