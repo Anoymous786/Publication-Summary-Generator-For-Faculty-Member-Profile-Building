@@ -1,5 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 from . import views
 
 urlpatterns = [
@@ -17,4 +19,15 @@ urlpatterns = [
     path('missVal/', views.missVal_view, name='missVal'),
     path('upload-redirect/', views.upload_redirect, name='upload_redirect'),
     path('payment/', views.payment, name='payment'),
+    path('faculty/profile/', views.faculty_profile, name='faculty_profile'),
+    path('faculty/profile/edit/', views.faculty_profile_edit, name='faculty_profile_edit'),
+    path('faculty/photo/change/', views.faculty_photo_change, name='faculty_photo_change'),
+    path('faculty/photo/remove/', views.faculty_photo_remove, name='faculty_photo_remove'),
+    path('faculty/publication/add/', views.faculty_publication_add, name='faculty_publication_add'),
+    path('faculty/publication/edit/<int:pub_id>/', views.faculty_publication_edit, name='faculty_publication_edit'),
+    path('faculty/publication/delete/<int:pub_id>/', views.faculty_publication_delete, name='faculty_publication_delete'),
 ]
+
+# Serve media files in development
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

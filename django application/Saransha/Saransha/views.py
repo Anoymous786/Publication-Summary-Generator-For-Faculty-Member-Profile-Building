@@ -4,6 +4,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.core.files.storage import FileSystemStorage
 from django.contrib import messages
+from django.db import IntegrityError
 import pandas as pd
 import openpyxl
 import os
@@ -19,7 +20,9 @@ from .utils import (
     update_publication_details
 )
 
-from graph_app.models import Users_Publication
+from graph_app.models import Users_Publication, FacultyProfile, Publication
+from graph_app.forms import FacultyProfileForm
+import os
 
 
 # =====================================================
@@ -230,16 +233,61 @@ def login(request):
 
 
 def signup(request):
+    error_message = None
+    
     if request.method == "POST":
-        Users_Publication.objects.create(
-            user_name=request.POST["username"],
-            user_email=request.POST["email"],
-            user_password=request.POST["password"],
-            user_category=request.POST["category"]
-        )
-        return redirect("login")
+        email = request.POST.get("email", "").strip()
+        username = request.POST.get("username", "").strip()
+        password = request.POST.get("password", "")
+        category = request.POST.get("category", "")
+        user_category = category.lower() if category else ""
+        
+        # Validate required fields
+        if not email or not username or not password or not category:
+            error_message = "All fields are required. Please fill in all the information."
+            return render(request, "signup.html", {"error": error_message})
+        
+        # Check if email already exists before attempting to create
+        if Users_Publication.objects.filter(user_email=email).exists():
+            error_message = "Email already registered. Please use a different email or try logging in."
+            return render(request, "signup.html", {"error": error_message})
+        
+        # Create the user with error handling
+        try:
+            new_user = Users_Publication.objects.create(
+                user_name=username,
+                user_email=email,
+                user_password=password,
+                user_category=category
+            )
+            
+            # Auto-create FacultyProfile if user is a faculty member
+            if user_category in ['faculty', 'professor', 'associate professor', 'assistant professor']:
+                try:
+                    FacultyProfile.objects.create(
+                        user=new_user,
+                        full_name=username  # Initialize with username
+                    )
+                except Exception as e:
+                    # Log error but don't break signup process
+                    print(f"Warning: Could not create FacultyProfile for {new_user.user_email}: {str(e)}")
+            
+            # Success - redirect to login
+            messages.success(request, "Account created successfully! Please login.")
+            return redirect("login")
+            
+        except IntegrityError as e:
+            # Handle database integrity errors (e.g., unique constraint violations)
+            error_message = "Email already registered. Please use a different email or try logging in."
+            return render(request, "signup.html", {"error": error_message})
+            
+        except Exception as e:
+            # Handle any other unexpected errors
+            error_message = "An error occurred while creating your account. Please try again later."
+            print(f"Error creating user: {str(e)}")
+            return render(request, "signup.html", {"error": error_message})
 
-    return render(request, "signup.html")
+    return render(request, "signup.html", {"error": error_message})
 
 
 def logo_view(request):
@@ -416,3 +464,300 @@ def upload_redirect(request):
     if "user_email" not in request.session:
         return redirect("login")
     return redirect("upload")
+
+
+# =====================================================
+# FACULTY PROFILE MANAGEMENT
+# =====================================================
+
+def faculty_profile(request):
+    """Dashboard view for faculty to manage their profile"""
+    # Check if user is logged in
+    if "user_email" not in request.session:
+        return redirect("login")
+    
+    # Get the logged-in user
+    try:
+        user = Users_Publication.objects.get(user_email=request.session["user_email"])
+    except Users_Publication.DoesNotExist:
+        messages.error(request, "User not found. Please login again.")
+        return redirect("login")
+    
+    # Check if user is a faculty member
+    if user.user_category.lower() not in ['faculty', 'professor', 'associate professor', 'assistant professor']:
+        messages.warning(request, "This page is only accessible to faculty members.")
+        return redirect("login")
+    
+    # Get or create faculty profile
+    try:
+        profile = FacultyProfile.objects.get(user=user)
+    except FacultyProfile.DoesNotExist:
+        # Create a new profile if it doesn't exist
+        profile = FacultyProfile.objects.create(
+            user=user,
+            full_name=user.user_name  # Initialize with username
+        )
+        messages.info(request, "Profile created. Please complete your profile information.")
+    
+    # Get publications for this faculty
+    publications = profile.publications.all()
+    
+    # Calculate metrics
+    total_publications = profile.get_total_publications()
+    total_citations = profile.get_total_citations()
+    h_index = profile.get_h_index()
+    i10_index = profile.get_i10_index()
+    
+    context = {
+        'profile': profile,
+        'user': user,
+        'publications': publications,
+        'total_publications': total_publications,
+        'total_citations': total_citations,
+        'h_index': h_index,
+        'i10_index': i10_index,
+    }
+    
+    return render(request, 'faculty/profile.html', context)
+
+
+def faculty_profile_edit(request):
+    """View for editing faculty profile information"""
+    if "user_email" not in request.session:
+        return redirect("login")
+    
+    try:
+        user = Users_Publication.objects.get(user_email=request.session["user_email"])
+    except Users_Publication.DoesNotExist:
+        messages.error(request, "User not found. Please login again.")
+        return redirect("login")
+    
+    if user.user_category.lower() not in ['faculty', 'professor', 'associate professor', 'assistant professor']:
+        messages.warning(request, "This page is only accessible to faculty members.")
+        return redirect("login")
+    
+    try:
+        profile = FacultyProfile.objects.get(user=user)
+    except FacultyProfile.DoesNotExist:
+        messages.error(request, "Profile not found.")
+        return redirect("faculty_profile")
+    
+    if request.method == "POST":
+        form = FacultyProfileForm(request.POST, request.FILES, instance=profile)
+        if form.is_valid():
+            try:
+                form.save()
+                messages.success(request, "Profile updated successfully!")
+                return redirect("faculty_profile")
+            except Exception as e:
+                messages.error(request, f"Error saving profile: {str(e)}")
+        else:
+            messages.error(request, "Please correct the errors below.")
+    else:
+        form = FacultyProfileForm(instance=profile)
+    
+    return render(request, 'faculty/profile_edit.html', {
+        'form': form,
+        'profile': profile,
+        'user': user
+    })
+
+
+def faculty_photo_change(request):
+    """View for changing profile photo"""
+    if "user_email" not in request.session:
+        return redirect("login")
+    
+    try:
+        user = Users_Publication.objects.get(user_email=request.session["user_email"])
+    except Users_Publication.DoesNotExist:
+        messages.error(request, "User not found. Please login again.")
+        return redirect("login")
+    
+    if user.user_category.lower() not in ['faculty', 'professor', 'associate professor', 'assistant professor']:
+        messages.warning(request, "This page is only accessible to faculty members.")
+        return redirect("login")
+    
+    try:
+        profile = FacultyProfile.objects.get(user=user)
+    except FacultyProfile.DoesNotExist:
+        messages.error(request, "Profile not found.")
+        return redirect("faculty_profile")
+    
+    if request.method == "POST" and 'profile_picture' in request.FILES:
+        try:
+            # Delete old photo if exists
+            if profile.profile_picture:
+                old_photo_path = profile.profile_picture.path
+                if os.path.exists(old_photo_path):
+                    os.remove(old_photo_path)
+            
+            # Save new photo
+            profile.profile_picture = request.FILES['profile_picture']
+            profile.save()
+            messages.success(request, "Profile photo updated successfully!")
+        except Exception as e:
+            messages.error(request, f"Error updating photo: {str(e)}")
+    
+    return redirect("faculty_profile")
+
+
+def faculty_photo_remove(request):
+    """View for removing profile photo"""
+    if "user_email" not in request.session:
+        return redirect("login")
+    
+    if request.method != "POST":
+        messages.error(request, "Invalid request method.")
+        return redirect("faculty_profile")
+    
+    try:
+        user = Users_Publication.objects.get(user_email=request.session["user_email"])
+    except Users_Publication.DoesNotExist:
+        messages.error(request, "User not found. Please login again.")
+        return redirect("login")
+    
+    if user.user_category.lower() not in ['faculty', 'professor', 'associate professor', 'assistant professor']:
+        messages.warning(request, "This page is only accessible to faculty members.")
+        return redirect("login")
+    
+    try:
+        profile = FacultyProfile.objects.get(user=user)
+    except FacultyProfile.DoesNotExist:
+        messages.error(request, "Profile not found.")
+        return redirect("faculty_profile")
+    
+    try:
+        # Delete photo file if exists
+        if profile.profile_picture:
+            photo_path = profile.profile_picture.path
+            if os.path.exists(photo_path):
+                os.remove(photo_path)
+            profile.profile_picture = None
+            profile.save()
+            messages.success(request, "Profile photo removed successfully!")
+        else:
+            messages.info(request, "No photo to remove.")
+    except Exception as e:
+        messages.error(request, f"Error removing photo: {str(e)}")
+    
+    return redirect("faculty_profile")
+
+
+def faculty_publication_add(request):
+    """View for adding a new publication"""
+    if "user_email" not in request.session:
+        return redirect("login")
+    
+    try:
+        user = Users_Publication.objects.get(user_email=request.session["user_email"])
+    except Users_Publication.DoesNotExist:
+        messages.error(request, "User not found. Please login again.")
+        return redirect("login")
+    
+    if user.user_category.lower() not in ['faculty', 'professor', 'associate professor', 'assistant professor']:
+        messages.warning(request, "This page is only accessible to faculty members.")
+        return redirect("login")
+    
+    try:
+        profile = FacultyProfile.objects.get(user=user)
+    except FacultyProfile.DoesNotExist:
+        messages.error(request, "Profile not found.")
+        return redirect("faculty_profile")
+    
+    if request.method == "POST":
+        try:
+            title = request.POST.get("title", "").strip()
+            year = request.POST.get("year", "")
+            journal = request.POST.get("journal", "").strip()
+            citations = request.POST.get("cited_by", "0")
+            
+            if not title:
+                messages.error(request, "Title is required.")
+                return redirect("faculty_profile")
+            
+            Publication.objects.create(
+                main_author=profile.full_name or user.user_name,
+                title=title,
+                year=int(year) if year else datetime.now().year,
+                cited_by=int(citations) if citations else 0,
+                conference_journal=journal,
+                faculty=profile
+            )
+            messages.success(request, "Publication added successfully!")
+        except Exception as e:
+            messages.error(request, f"Error adding publication: {str(e)}")
+    
+    return redirect("faculty_profile")
+
+
+def faculty_publication_edit(request, pub_id):
+    """View for editing a publication"""
+    if "user_email" not in request.session:
+        return redirect("login")
+    
+    try:
+        user = Users_Publication.objects.get(user_email=request.session["user_email"])
+    except Users_Publication.DoesNotExist:
+        messages.error(request, "User not found. Please login again.")
+        return redirect("login")
+    
+    if user.user_category.lower() not in ['faculty', 'professor', 'associate professor', 'assistant professor']:
+        messages.warning(request, "This page is only accessible to faculty members.")
+        return redirect("login")
+    
+    try:
+        profile = FacultyProfile.objects.get(user=user)
+        publication = Publication.objects.get(id=pub_id, faculty=profile)
+    except (FacultyProfile.DoesNotExist, Publication.DoesNotExist):
+        messages.error(request, "Publication not found.")
+        return redirect("faculty_profile")
+    
+    if request.method == "POST":
+        try:
+            publication.title = request.POST.get("title", "").strip()
+            publication.year = int(request.POST.get("year", datetime.now().year))
+            publication.conference_journal = request.POST.get("journal", "").strip()
+            publication.cited_by = int(request.POST.get("cited_by", "0") or "0")
+            publication.save()
+            messages.success(request, "Publication updated successfully!")
+            return redirect("faculty_profile")
+        except Exception as e:
+            messages.error(request, f"Error updating publication: {str(e)}")
+    
+    return render(request, 'faculty/publication_edit.html', {
+        'publication': publication,
+        'profile': profile
+    })
+
+
+def faculty_publication_delete(request, pub_id):
+    """View for deleting a publication"""
+    if "user_email" not in request.session:
+        return redirect("login")
+    
+    if request.method != "POST":
+        messages.error(request, "Invalid request method.")
+        return redirect("faculty_profile")
+    
+    try:
+        user = Users_Publication.objects.get(user_email=request.session["user_email"])
+    except Users_Publication.DoesNotExist:
+        messages.error(request, "User not found. Please login again.")
+        return redirect("login")
+    
+    if user.user_category.lower() not in ['faculty', 'professor', 'associate professor', 'assistant professor']:
+        messages.warning(request, "This page is only accessible to faculty members.")
+        return redirect("login")
+    
+    try:
+        profile = FacultyProfile.objects.get(user=user)
+        publication = Publication.objects.get(id=pub_id, faculty=profile)
+        publication.delete()
+        messages.success(request, "Publication deleted successfully!")
+    except (FacultyProfile.DoesNotExist, Publication.DoesNotExist):
+        messages.error(request, "Publication not found.")
+    except Exception as e:
+        messages.error(request, f"Error deleting publication: {str(e)}")
+    
+    return redirect("faculty_profile")
